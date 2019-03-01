@@ -1,4 +1,3 @@
-import {vec3, vec4} from 'gl-matrix';
 import Drawable from '../rendering/gl/Drawable';
 import {gl} from '../globals';
 import * as Loader from 'webgl-obj-loader';
@@ -7,16 +6,14 @@ class Mesh extends Drawable {
   indices: Uint32Array;
   positions: Float32Array;
   normals: Float32Array;
+  matrix: Float32Array;
   colors: Float32Array;
   uvs: Float32Array;
-  center: vec4;
 
   objString: string;
 
-  constructor(objString: string, center: vec3) {
+  constructor(objString: string) {
     super(); // Call the constructor of the super class. This is required.
-    this.center = vec4.fromValues(center[0], center[1], center[2], 1);
-
     this.objString = objString;
   }
 
@@ -43,10 +40,10 @@ class Mesh extends Drawable {
     idxTemp = loadedMesh.indices;
 
     // white vert color for now
-    this.colors = new Float32Array(posTemp.length);
-    for (var i = 0; i < posTemp.length; ++i){
-      this.colors[i] = 1.0;
-    }
+    // this.colors = new Float32Array(posTemp.length);
+    // for (var i = 0; i < posTemp.length; ++i){
+    //   this.colors[i] = 1.0;
+    // }
 
     this.indices = new Uint32Array(idxTemp);
     this.normals = new Float32Array(norTemp);
@@ -57,6 +54,7 @@ class Mesh extends Drawable {
     this.generatePos();
     this.generateNor();
     this.generateUV();
+    this.generateTranslate();
     this.generateCol();
 
     this.count = this.indices.length;
@@ -69,14 +67,24 @@ class Mesh extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufPos);
     gl.bufferData(gl.ARRAY_BUFFER, this.positions, gl.STATIC_DRAW);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufCol);
-    gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
-
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufUV);
     gl.bufferData(gl.ARRAY_BUFFER, this.uvs, gl.STATIC_DRAW);
 
     console.log(`Created Mesh from OBJ`);
     this.objString = ""; // hacky clear
+  }
+
+  setInstanceVBOs(mat: Float32Array, colors: Float32Array)
+  {
+    this.matrix = mat;
+    this.colors = colors;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufMat);
+    gl.bufferData(gl.ARRAY_BUFFER, this.matrix, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufCol);
+    gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
+
+    console.log(`Pass instance variables to VBO.`);
   }
 };
 

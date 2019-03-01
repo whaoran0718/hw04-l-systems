@@ -6,7 +6,7 @@ class Square extends Drawable {
   indices: Uint32Array;
   positions: Float32Array;
   colors: Float32Array;
-  offsets: Float32Array; // Data for bufTranslate
+  matrix: Float32Array;
 
 
   constructor() {
@@ -37,14 +37,16 @@ class Square extends Drawable {
     console.log(`Created square`);
   }
 
-  setInstanceVBOs(offsets: Float32Array, colors: Float32Array) {
+  setInstanceVBOs(mat: Float32Array, colors: Float32Array) {
+    this.matrix = mat;
     this.colors = colors;
-    this.offsets = offsets;
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufMat);
+    gl.bufferData(gl.ARRAY_BUFFER, this.matrix, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.bufCol);
     gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.bufTranslate);
-    gl.bufferData(gl.ARRAY_BUFFER, this.offsets, gl.STATIC_DRAW);
+
+    console.log(`Pass instance variables to VBO.`);
   }
 };
 

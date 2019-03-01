@@ -20,13 +20,11 @@ class Camera {
     const canvas = <HTMLCanvasElement> document.getElementById('canvas');
 
     this.controls = CameraControls(canvas, {
-      position: position,
+      eye: position,
       center: target,
     });
 
-    vec3.add(this.target, this.position, this.direction);
     mat4.lookAt(this.viewMatrix, this.controls.eye, this.controls.center, this.controls.up);
-
     this.position = this.controls.eye;
     this.up = this.controls.up;
     vec3.subtract(this.forward, this.target, this.position);

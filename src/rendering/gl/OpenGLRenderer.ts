@@ -25,7 +25,6 @@ class OpenGLRenderer {
   render(camera: Camera, prog: ShaderProgram, drawables: Array<Drawable>) {
     let model = mat4.create();
     let viewProj = mat4.create();
-    let color = vec4.fromValues(1, 0, 0, 1);
     // Each column of the axes matrix is an axis. Right, Up, Forward.
     let axes = mat3.fromValues(camera.right[0], camera.right[1], camera.right[2],
                                camera.up[0], camera.up[1], camera.up[2],
